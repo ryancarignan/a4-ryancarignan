@@ -7,7 +7,9 @@ export class Camera {
   private static readonly DEFAULT_RHO = 5;
   private static readonly MIN_THETA = -2 * Math.PI;
   private static readonly MAX_THETA = 0 * Math.PI;
-  private static readonly ORIGIN = new THREE.Vector3(0, 0, 0);
+
+  private gameWindowWidth: number;
+  private gameWindowHeight: number;
 
   private fov: number;
   private aspectRatio: number;
@@ -15,6 +17,7 @@ export class Camera {
   private farPlane: number;
   private camera: THREE.PerspectiveCamera;
 
+  private origin: THREE.Vector3;
   private theta: number;
   private phi: number;
   private rho: number;
@@ -25,9 +28,12 @@ export class Camera {
 
   public debugOn: boolean = false;
 
-  public constructor() {
+  public constructor(gameWindowWidth: number, gameWindowHeight: number) {
+    this.gameWindowWidth = gameWindowWidth;
+    this.gameWindowHeight = gameWindowHeight;
+
     this.fov = 60;
-    this.aspectRatio = window.innerWidth / window.innerHeight;
+    this.aspectRatio = gameWindowWidth / gameWindowHeight;
     this.nearPlane = 0.1;
     this.farPlane = 1000;
 
@@ -38,6 +44,7 @@ export class Camera {
       this.farPlane
     );
 
+    this.origin = new THREE.Vector3(0, 0, 0);
     this.theta = Camera.DEFAULT_THETA;
     this.phi = Camera.DEFAULT_PHI;
     this.rho = Camera.DEFAULT_RHO;
@@ -56,8 +63,8 @@ export class Camera {
    * @param y absolute Y-position of the controller
    */
   public moveAbsolute(x: number, y: number) {
-    this.phi = ((x / window.innerHeight) - 0.5) * 2 * Math.PI;
-    this.theta = ((y / window.innerWidth) - 0.5) * 2 * Math.PI;
+    this.phi = ((x / this.gameWindowHeight) - 0.5) * 2 * Math.PI;
+    this.theta = ((y / this.gameWindowWidth) - 0.5) * 2 * Math.PI;
     this.theta = clamp(this.theta, Camera.MIN_THETA, Camera.MAX_THETA);
 
     if (this.debugOn) {
@@ -94,12 +101,16 @@ export class Camera {
     this.camera.position.x = this.x;
     this.camera.position.y = this.y;
     this.camera.position.z = this.z;
-    this.camera.lookAt(Camera.ORIGIN);
+    this.camera.lookAt(this.origin);
 
     if (this.debugOn) {
       debug('x', this.x);
       debug('y', this.y);
       debug('z', this.z);
     }
+  }
+
+  public setOrigin(origin: THREE.Vector3) {
+    this.origin = origin;
   }
 }
