@@ -1,11 +1,11 @@
 import * as THREE from 'three';
 
 export class Character {
-  protected model: THREE.Mesh;
+  protected model: THREE.Object3D;
 
   public debugOn = false;
 
-  public constructor(model: THREE.Mesh) {
+  public constructor(model: THREE.Object3D) {
     this.model = model;
   }
 

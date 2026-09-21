@@ -4,9 +4,9 @@ import { clamp, debug } from './utils';
 export class Camera {
   private static readonly DEFAULT_THETA = 0;
   private static readonly DEFAULT_PHI = 0;
-  private static readonly DEFAULT_RHO = 5;
-  private static readonly MIN_THETA = -2 * Math.PI;
-  private static readonly MAX_THETA = 0 * Math.PI;
+  private static readonly DEFAULT_RHO = 7.5;
+  private static readonly MIN_THETA = -0.75 * Math.PI;
+  private static readonly MAX_THETA = -0.10 * Math.PI;
 
   private gameWindowWidth: number;
   private gameWindowHeight: number;
@@ -22,9 +22,14 @@ export class Camera {
   private phi: number;
   private rho: number;
   
+  // actual camera position
   private x!: number;
   private y!: number;
   private z!: number;
+
+  // last coords of user input
+  private lastInputX: number;
+  private lastInputY: number;
 
   public debugOn: boolean = false;
 
@@ -49,6 +54,9 @@ export class Camera {
     this.phi = Camera.DEFAULT_PHI;
     this.rho = Camera.DEFAULT_RHO;
 
+    this.lastInputX = 0;
+    this.lastInputY = 0;
+
     this.setCartesianCoords();
   }
 
@@ -59,12 +67,12 @@ export class Camera {
 
   /**
    * Move according to an absolute position of a controller.
-   * @param x absolute X-position of the controller
-   * @param y absolute Y-position of the controller
+   * @param x absolute X-position of the controller [-1..1]
+   * @param y absolute Y-position of the controller [-1..1]
    */
   public moveAbsolute(x: number, y: number) {
-    this.phi = ((x / this.gameWindowHeight) - 0.5) * 2 * Math.PI;
-    this.theta = ((y / this.gameWindowWidth) - 0.5) * 2 * Math.PI;
+    this.phi = x * 2 * Math.PI;
+    this.theta = y * 2 * Math.PI;
     this.theta = clamp(this.theta, Camera.MIN_THETA, Camera.MAX_THETA);
 
     if (this.debugOn) {
@@ -82,7 +90,17 @@ export class Camera {
    * @param deltaY change in Y-position of the controller
    */
   public moveRelative(deltaX: number, deltaY: number) {
-    throw new Error('Not yet implemented.');
+    this.phi += this.lastInputX + (deltaX / this.gameWindowHeight) * 2 * Math.PI;
+    this.theta += this.lastInputY + (deltaY / this.gameWindowWidth) * 2 * Math.PI;
+    this.theta = clamp(this.theta, Camera.MIN_THETA, Camera.MAX_THETA);
+
+    if (this.debugOn) {
+      debug('phi', this.phi);
+      debug('theta', this.theta);
+      debug('rho', this.rho);
+    }
+
+    this.setCartesianCoords();
   }
 
   /**

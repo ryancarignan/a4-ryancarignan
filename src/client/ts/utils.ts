@@ -25,3 +25,15 @@ export function debug(id: string, val: string | number | boolean) {
 
   elem.innerText = `${id}: ${val}`;
 }
+
+export function extractErrorMessage(e: unknown, defaultMessage: string) {
+  if (e instanceof Error) {
+    return e.message;
+  } else if (typeof e === 'string') {
+    return e;
+  } else if (typeof e === 'object' && e !== null && 'message' in e && typeof e.message === 'string') {
+    return e.message;
+  } else {
+    return defaultMessage;
+  }
+}
