@@ -1,3 +1,6 @@
+import * as THREE from 'three';
+import { Vector3DTO } from './types';
+
 /**
  * Clamp a value between a min and max
  * @param val value to be clamped
@@ -36,4 +39,12 @@ export function extractErrorMessage(e: unknown, defaultMessage: string) {
   } else {
     return defaultMessage;
   }
+}
+
+export function dtoToVector3(dto: Vector3DTO): THREE.Vector3 {
+  return new THREE.Vector3(dto.x, dto.y, dto.z);
+}
+
+export function degToRad(deg: number): number {
+  return deg * Math.PI / 180;
 }

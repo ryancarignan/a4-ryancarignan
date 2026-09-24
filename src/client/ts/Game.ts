@@ -4,6 +4,7 @@ import { Camera } from './Camera';
 import { debug, extractErrorMessage } from './utils';
 import { PlayerCharacter } from './characters/PlayerCharacter';
 import { Controller } from './Controller';
+import { Map } from './Map';
 
 export class Game {
 
@@ -13,6 +14,7 @@ export class Game {
   private camera: Camera;
   private controller: Controller;
   private player: PlayerCharacter;
+  private map: Map;
 
   private constructor(canvas: HTMLCanvasElement, gameWindowWidth: number, gameWindowHeight: number, playerMesh: THREE.Object3D) {
     this.game = new THREE.Object3D();
@@ -21,6 +23,7 @@ export class Game {
     this.controller = new Controller(canvas, 'mouse', 'keyboard');
     this.player = new PlayerCharacter(playerMesh, this.camera);
     this.game.add(this.player.getObject3D());
+    this.map = new Map();
   }
 
   public static async create(canvas: HTMLCanvasElement, gameWindowWidth: number, gameWindowHeight: number): Promise<Game> {
@@ -64,15 +67,9 @@ export class Game {
     }
   }
 
-  public start() {
-    // receive mouse movements for camera control
-    // document.addEventListener('mousemove', (event: MouseEvent) => {
-    //   this.camera.moveAbsolute(event.clientX, event.clientY);
-    //   if (this.debugOn) {
-    //     debug('mouseX', event.clientX);
-    //     debug('mouseY', event.clientY);
-    //   }
-    // });
+  public async start() {
+    await this.map.loadMap('trainingRoom.json');
+    this.game.add(this.map.getMap());
 
     window.addEventListener("gamepadconnected", (e) => {
       console.log(
