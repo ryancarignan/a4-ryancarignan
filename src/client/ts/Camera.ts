@@ -65,6 +65,11 @@ export class Camera {
     return this.camera;
   }
 
+  /** Get the cartesian position of the camera */
+  public getPosition(): THREE.Vector3 {
+    return new THREE.Vector3(this.x, this.y, this.z);
+  }
+
   /**
    * Move according to an absolute position of a controller.
    * @param x absolute X-position of the controller [-1..1]

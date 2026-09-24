@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { FBXLoader } from 'three/examples/jsm/Addons.js';
 import { Camera } from './Camera';
-import { debug, extractErrorMessage } from './utils';
+import { debug, degToRad, extractErrorMessage } from './utils';
 import { PlayerCharacter } from './characters/PlayerCharacter';
 import { Controller } from './Controller';
 import { Map } from './Map';
@@ -34,10 +34,22 @@ export class Game {
   }
 
   private static createFallbackMesh(): THREE.Object3D {
-    const r = 1;
-    const geometry = new THREE.BoxGeometry(1, 2, 1.2);
-    const material = new THREE.MeshBasicMaterial({ color: 0xffffbb });
-    return new THREE.Mesh(geometry, material);
+    const bodyGeometry = new THREE.CapsuleGeometry(0.5, 1, 4, 12);
+    const bodyMaterial = new THREE.MeshPhongMaterial({ color: 0xF67280, side: THREE.DoubleSide })
+    const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+
+    const eyeGeometry = new THREE.CylinderGeometry(0.2, 0.2, 0.3);
+    const eyeMaterial = new THREE.MeshPhongMaterial({ color: 0xC06C84, side: THREE.DoubleSide })
+    const eye1 = new THREE.Mesh(eyeGeometry, eyeMaterial);
+    eye1.position.set(0.15, 0.6, 0.35);
+    eye1.rotation.x = degToRad(90);
+    const eye2 = new THREE.Mesh(eyeGeometry, eyeMaterial);
+    eye2.position.set(-0.15, 0.6, 0.35);
+    eye2.rotation.x = degToRad(90);
+
+    const object = new THREE.Object3D();
+    object.add(body, eye1, eye2);
+    return object;
   }
 
   public getGameObject(): THREE.Object3D {
@@ -54,6 +66,7 @@ export class Game {
     this.camera.moveRelative(this.controller.getLookX(), this.controller.getLookY());
     this.controller.debugOn = true;
     this.camera.updateCameraPosition();
+    this.player.updateRotation();
   }
 
   private static async loadModel(loader: FBXLoader, filepath: string): Promise<THREE.Object3D | undefined> {
@@ -70,15 +83,5 @@ export class Game {
   public async start() {
     await this.map.loadMap('trainingRoom.json');
     this.game.add(this.map.getMap());
-
-    window.addEventListener("gamepadconnected", (e) => {
-      console.log(
-        "Gamepad connected at index %d: %s. %d buttons, %d axes.",
-        e.gamepad.index,
-        e.gamepad.id,
-        e.gamepad.buttons.length,
-        e.gamepad.axes.length,
-      );
-    });
   }
 }

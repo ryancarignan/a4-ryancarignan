@@ -3,6 +3,8 @@ import type { BoxGeometryDTO, MapDTO, PlaneGeometryDTO, SphereGeometryDTO } from
 import { degToRad, dtoToVector3 } from './utils';
 
 export class Map {
+  public debugOn = true;
+
   private lights: THREE.DirectionalLight[];
   private colliders: THREE.Object3D[];
   private map: THREE.Object3D; // Parent object to all others
@@ -72,7 +74,7 @@ export class Map {
     const mapData = await response.json() as MapDTO;
     this.clearMap();
 
-    const ambientLight = new THREE.AmbientLight(0x404040, 0.3)
+    const ambientLight = new THREE.AmbientLight(0x404040, 1)
     this.map.add(ambientLight);
 
     for (const light of mapData.lights) {
@@ -115,6 +117,10 @@ export class Map {
     const light = new THREE.DirectionalLight(color, intensity);
     light.position.copy(pos);
     light.lookAt(lookAt);
+    if (this.debugOn) {
+      const axes = new THREE.AxesHelper(3);
+      light.add(axes);
+    }
     this.map.add(light);
     this.lights.push(light);
   }

@@ -4,7 +4,13 @@
             "pos": { "x": 5, "y": 5, "z": 5 },
             "lookAt": { "x": 0, "y": 0, "z": 0 },
             "color": "#FFFFFF",
-            "intensity": 5
+            "intensity": 2
+        },
+        {
+            "pos": { "x": -10, "y": -1, "z": -1 },
+            "lookAt": { "x": 0, "y": 0, "z": 0 },
+            "color": "#FFFFFF",
+            "intensity": 1
         }
     ],
     "colliders": [
@@ -16,7 +22,7 @@
                 "height": 5
             },
             "material": {
-                "color": "#DFEBEB",
+                "color": "#F8B195",
                 "side": 2
             },
             "rotation": { "x": 90, "y": 0, "z": 0 }
