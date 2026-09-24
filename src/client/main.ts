@@ -23,7 +23,7 @@ async function main() {
   await game.start();
 
   function animate(time: number) {
-    game.updateGameState();
+    game.updateGameState(time);
 
     renderer.render(scene, game.getGameCamera());
   }

@@ -1,12 +1,15 @@
 import * as THREE from 'three';
 
 export class Character {
+  protected object: THREE.Object3D;
   protected model: THREE.Object3D;
   protected velocity: THREE.Vector3;
 
   public debugOn = false;
 
   public constructor(model: THREE.Object3D, position?: THREE.Vector3) {
+    this.object = new THREE.Object3D();
+    this.object.add(model);
     this.model = model;
     position = (position === undefined) ? new THREE.Vector3(0, 0, 0) : position;
     this.model.position.copy(position);
@@ -14,11 +17,11 @@ export class Character {
   }
 
   public getObject3D(): THREE.Object3D {
-    return this.model;
+    return this.object;
   }
 
   public setPosition(position: THREE.Vector3) {
-    this.model.position.copy(position);
+    this.object.position.copy(position);
   }
 
   public setVelocity(velocity: THREE.Vector3) {
@@ -33,6 +36,6 @@ export class Character {
    * Update the position of the character model (add velocity to position)
    */
   public updatePosition() {
-    this.model.position.add(this.velocity);
+    this.object.position.add(this.velocity);
   }
 }

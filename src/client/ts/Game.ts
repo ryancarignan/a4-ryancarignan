@@ -15,6 +15,7 @@ export class Game {
   private controller: Controller;
   private player: PlayerCharacter;
   private map: Map;
+  private previousTime;
 
   private constructor(canvas: HTMLCanvasElement, gameWindowWidth: number, gameWindowHeight: number, playerMesh: THREE.Object3D) {
     this.game = new THREE.Object3D();
@@ -24,6 +25,7 @@ export class Game {
     this.player = new PlayerCharacter(playerMesh, this.camera);
     this.game.add(this.player.getObject3D());
     this.map = new Map();
+    this.previousTime = 0;
   }
 
   public static async create(canvas: HTMLCanvasElement, gameWindowWidth: number, gameWindowHeight: number): Promise<Game> {
@@ -60,11 +62,27 @@ export class Game {
     return this.camera.getCamera();
   }
 
-  public updateGameState() {
+  public updateGameState(time: number) {
+    const deltaTime = (this.previousTime === 0)
+      ? 0
+      : (time - this.previousTime);
+    this.previousTime = time;
+
     this.controller.read();
     //this.camera.moveAbsolute(window.innerWidth / 2 + 1 * this.controller.getLookX(), window.innerHeight / 2 + 1 * this.controller.getLookY());
     this.camera.moveRelative(this.controller.getLookX(), this.controller.getLookY());
     this.controller.debugOn = true;
+
+    const velocity = new THREE.Vector3(this.controller.getMoveX(), 0, this.controller.getMoveY());
+    velocity.multiplyScalar(0.02);
+    this.player.setVelocity(velocity);
+
+    if (this.controller.getJump()) {
+      this.player.jump();
+    }
+    this.player.applyGravity(deltaTime);
+
+    this.player.updatePosition();
     this.camera.updateCameraPosition();
     this.player.updateRotation();
   }
