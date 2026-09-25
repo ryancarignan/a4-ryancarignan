@@ -7,25 +7,93 @@
             "intensity": 2
         },
         {
-            "pos": { "x": -10, "y": -1, "z": -1 },
-            "lookAt": { "x": 0, "y": 0, "z": 0 },
+            "pos": { "x": -10, "y": 2, "z": -1 },
+            "lookAt": { "x": 0, "y": 0, "z": 10 },
             "color": "#FFFFFF",
-            "intensity": 1
+            "intensity": 5
         }
     ],
     "colliders": [
         {
-            "pos": { "x": 0, "y": -1.5, "z": 0 },
+            "name": "floor",
+            "pos": { "x": 0, "y": -1, "z": 0 },
             "geometryType": "plane",
             "geometry": {
-                "width": 5,
-                "height": 5
+                "width": 20,
+                "height": 20
+            },
+            "material": {
+                "color": "#3C3C3C",
+                "side": 1
+            },
+            "rotation": { "x": 90, "y": 0, "z": 0 }
+        },
+        {
+            "name": "left wall",
+            "pos": { "x": 0, "y": 4, "z": -10 },
+            "geometryType": "plane",
+            "geometry": {
+                "width": 20,
+                "height": 10
+            },
+            "material": {
+                "color": "#3C3C3C"
+            }
+        },
+        {
+            "name": "right wall",
+            "pos": { "x": 0, "y": 4, "z": 10 },
+            "geometryType": "plane",
+            "geometry": {
+                "width": 20,
+                "height": 10
+            },
+            "material": {
+                "color": "#3C3C3C",
+                "side": 1
+            }
+        },
+        {
+            "name": "front wall",
+            "pos": { "x": 10, "y": 4, "z": 0 },
+            "geometryType": "plane",
+            "geometry": {
+                "width": 20,
+                "height": 10
+            },
+            "material": {
+                "color": "#3C3C3C",
+                "side": 1
+            },
+            "rotation": { "x": 0, "y": 90, "z": 0 }
+        },
+        {
+            "name": "back wall",
+            "pos": { "x": -10, "y": 4, "z": 0 },
+            "geometryType": "plane",
+            "geometry": {
+                "width": 20,
+                "height": 10
+            },
+            "material": {
+                "color": "#3C3C3C",
+                "transparent": true
+            },
+            "rotation": { "x": 0, "y": 90, "z": 0 }
+        },
+        {
+            "name": "target1",
+            "pos": { "x": 8, "y": 4, "z": 0 },
+            "geometryType": "sphere",
+            "geometry": {
+                "radius": 0.75,
+                "heightSegments": 5,
+                "widthSegments": 5
             },
             "material": {
                 "color": "#F8B195",
                 "side": 2
-            },
-            "rotation": { "x": 90, "y": 0, "z": 0 }
+            }
         }
     ]
 }

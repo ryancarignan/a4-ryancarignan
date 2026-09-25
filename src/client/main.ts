@@ -23,10 +23,14 @@ async function main() {
   scene.add(game.getGameObject());
   await game.start();
 
+  let startTime = 0;
   function animate(time: number) {
+    let endTime = time;
     game.updateGameState(time);
 
     renderer.render(scene, game.getGameCamera());
+    debug('fps', endTime - startTime);
+    startTime = time;
   }
 
   renderer.setAnimationLoop(animate);

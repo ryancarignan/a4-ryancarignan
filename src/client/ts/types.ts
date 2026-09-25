@@ -42,12 +42,14 @@ export type PlaneGeometryDTO = {
   height: number,
 }
 export type LightDTO = {
+  name?: string,
   pos: Vector3DTO,
   lookAt: Vector3DTO,
   color: THREE.ColorRepresentation,
   intensity: number,
 };
 export type ColliderDTO = {
+  name?: string,
   pos: Vector3DTO,
   geometryType: 'box' | 'sphere' | 'plane',
   geometry: BoxGeometryDTO | SphereGeometryDTO | PlaneGeometryDTO,

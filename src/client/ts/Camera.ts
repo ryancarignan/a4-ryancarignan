@@ -4,7 +4,7 @@ import { clamp, debug } from './utils';
 export class Camera {
   private static readonly DEFAULT_THETA = 0;
   private static readonly DEFAULT_PHI = 0;
-  private static readonly DEFAULT_RHO = 7.5;
+  private static readonly DEFAULT_RHO = 8;
   private static readonly MIN_THETA = -0.75 * Math.PI;
   private static readonly MAX_THETA = -0.10 * Math.PI;
 

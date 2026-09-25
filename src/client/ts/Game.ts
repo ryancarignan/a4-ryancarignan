@@ -29,6 +29,7 @@ export class Game {
     this.game.add(this.player.getObject3D());
     this.map = new Map();
     this.previousTime = 0;
+    this.createReticle();
   }
 
   public static async create(canvas: HTMLCanvasElement, gameWindowWidth: number, gameWindowHeight: number): Promise<Game> {
@@ -61,7 +62,7 @@ export class Game {
     const barrelGeometry = new THREE.CylinderGeometry(0.045, 0.05, 2);
     const stockGeometry = new THREE.BoxGeometry(0.15, 1, 0.125);
     const gripGeometry = new THREE.BoxGeometry(0.3, 0.06, 0.06);
-    const lineGeometry = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 2, 0), new THREE.Vector3(0, 30, 0)]);
+    const lineGeometry = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 2, 0), new THREE.Vector3(0, 100, 0)]);
 
     const material = new THREE.MeshPhongMaterial({ color: 0x6C5B7B, side: THREE.DoubleSide });
     const lineMaterial = new THREE.LineBasicMaterial({ color: 0xF67280 });
@@ -77,8 +78,34 @@ export class Game {
     grip.rotation.z = degToRad(-20);
 
     const object = new THREE.Object3D();
-    object.add(barrel, stock, grip, line);
+    object.add(barrel, stock, grip); // TODO add line back when zeroing properly
     return object;
+  }
+
+  private createReticle() {
+    const CANVAS_WIDTH = 50;
+    const CANVAS_HEIGHT = 50;
+    const CANVAS_X_CENTER = CANVAS_WIDTH / 2;
+    const CANVAS_Y_CENTER = CANVAS_HEIGHT / 2;
+    const RETICLE_WIDTH = 20;
+    const RETICLE_HEIGHT = 20;
+
+    const reticle = document.createElement('canvas');
+    reticle.id = 'reticle';
+    reticle.width = CANVAS_WIDTH;
+    reticle.height = CANVAS_HEIGHT;
+
+    const ctx = reticle.getContext('2d');
+    if (!ctx) return;
+    ctx.strokeStyle = 'white';
+    ctx.beginPath();
+    ctx.moveTo(CANVAS_X_CENTER, CANVAS_Y_CENTER + RETICLE_HEIGHT / 2);
+    ctx.lineTo(CANVAS_X_CENTER, CANVAS_Y_CENTER - RETICLE_HEIGHT / 2);
+    ctx.moveTo(CANVAS_X_CENTER + RETICLE_WIDTH / 2, CANVAS_Y_CENTER);
+    ctx.lineTo(CANVAS_X_CENTER - RETICLE_WIDTH / 2, CANVAS_Y_CENTER);
+    ctx.stroke();
+
+    document.body.appendChild(reticle);
   }
 
   public getGameObject(): THREE.Object3D {

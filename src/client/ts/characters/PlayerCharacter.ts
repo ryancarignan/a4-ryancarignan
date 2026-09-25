@@ -4,7 +4,7 @@ import { Character } from "./Character";
 import { Weapon } from '../Weapon';
 
 export class PlayerCharacter extends Character {
-  private static readonly CAMERA_ORIGIN = new THREE.Vector3(0, 2, 0);
+  private static readonly CAMERA_ORIGIN = new THREE.Vector3(0, 2.5, 0);
   private static readonly WEAPON_OFFSET = new THREE.Vector3(-0.55, 0.25, 0.25);
 
   private camera: Camera;
@@ -33,7 +33,7 @@ export class PlayerCharacter extends Character {
 
     const playerLookTarget = this.object.position.clone().add(playerLookDirection);
     const weaponLookTarget = this.model.position.clone().add(weaponLookDirection).add(PlayerCharacter.CAMERA_ORIGIN);
-    weaponLookTarget.multiplyScalar(1000)
+    weaponLookTarget.multiplyScalar(100)
 
     this.model.lookAt(playerLookTarget);
     this.weapon.lookAt(weaponLookTarget);
@@ -74,7 +74,7 @@ export class PlayerCharacter extends Character {
 
   public jump() {
     if (this.grounded) {
-      this.velocity.y = 0.015;
+      this.velocity.y = 0.02;
       this.grounded = false;
     }
   }
