@@ -88,19 +88,19 @@ export class Controller {
     if (this.moveMethod !== 'keyboard' || this.lookMethod !== 'mouse') {
       const gamepads = navigator.getGamepads();
       if (gamepads) {
-        const gp = gamepads[0];
+        const gp = Array.from(gamepads).find((gamepad) => gamepad?.connected);
         const bMap = buttonMaps[this.controllerLayout];
 
         // helpers
         const getButtonVal = (button: ControllerInput, fallback: boolean): boolean => {
           if (!gp || !(button in bMap)) return fallback;
           const index = bMap[button as keyof ControllerButtonMap];
-          return index !== undefined ? gp.buttons[index].pressed : fallback;
+          return index !== undefined ? (gp.buttons[index]?.pressed ?? fallback) : fallback;
         };
         const getAxesVal = (axes: ControllerInput, fallback: number): number => {
           if (!gp || !(axes in bMap)) return fallback;
           const index = bMap[axes as keyof ControllerButtonMap];
-          return index !== undefined ? gp.axes[index] : fallback;
+          return index !== undefined ? (gp.axes[index] ?? fallback) : fallback;
         };
 
         if (this.moveMethod === 'stick') {

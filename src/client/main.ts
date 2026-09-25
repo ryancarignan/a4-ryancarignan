@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { Game } from './ts/Game';
+import { debug } from './ts/utils';
 
 // debug log settings
 const debugOn = false;

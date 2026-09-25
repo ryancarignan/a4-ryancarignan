@@ -3,7 +3,7 @@ import * as THREE from 'three';
 export type LookMethod = 'mouse' | 'stick' | 'gyro';
 export type MoveMethod = 'keyboard' | 'stick';
 export type ControllerInput = 'moveY' | 'moveX' | 'lookY' | 'lookX' | 'jump' | 'swim' | 'fire';
-export type ControllerLayout = 'switchPro';
+export type ControllerLayout = 'switchPro' | 'xboxOne';
 export type ControllerButtonMap = {
   moveX: number,
   moveY: number,

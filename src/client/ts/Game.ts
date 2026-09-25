@@ -5,6 +5,7 @@ import { debug, degToRad, extractErrorMessage } from './utils';
 import { PlayerCharacter } from './characters/PlayerCharacter';
 import { Controller } from './Controller';
 import { Map } from './Map';
+import { Weapon } from './Weapon';
 
 export class Game {
 
@@ -21,8 +22,10 @@ export class Game {
     this.game = new THREE.Object3D();
     this.camera = new Camera(gameWindowWidth, gameWindowHeight);
     this.camera.debugOn = true;
-    this.controller = new Controller(canvas, 'mouse', 'keyboard');
-    this.player = new PlayerCharacter(playerMesh, this.camera);
+    this.controller = new Controller(canvas, 'stick', 'stick');
+    const weaponModel = Game.createFallbackWeaponMesh();
+    const weapon = new Weapon(weaponModel);
+    this.player = new PlayerCharacter(playerMesh, this.camera, weapon);
     this.game.add(this.player.getObject3D());
     this.map = new Map();
     this.previousTime = 0;
@@ -31,11 +34,11 @@ export class Game {
   public static async create(canvas: HTMLCanvasElement, gameWindowWidth: number, gameWindowHeight: number): Promise<Game> {
     const loader = new FBXLoader();
     const inklingFilepath = '/Player01/Player01.fbx';
-    const playerMesh = await Game.loadModel(loader, inklingFilepath) ?? Game.createFallbackMesh();
+    const playerMesh = await Game.loadModel(loader, inklingFilepath) ?? Game.createFallbackPlayerMesh();
     return new Game(canvas, gameWindowWidth, gameWindowHeight, playerMesh);
   }
 
-  private static createFallbackMesh(): THREE.Object3D {
+  private static createFallbackPlayerMesh(): THREE.Object3D {
     const bodyGeometry = new THREE.CapsuleGeometry(0.5, 1, 4, 12);
     const bodyMaterial = new THREE.MeshPhongMaterial({ color: 0xF67280, side: THREE.DoubleSide })
     const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
@@ -51,6 +54,30 @@ export class Game {
 
     const object = new THREE.Object3D();
     object.add(body, eye1, eye2);
+    return object;
+  }
+
+  private static createFallbackWeaponMesh(): THREE.Object3D {
+    const barrelGeometry = new THREE.CylinderGeometry(0.045, 0.05, 2);
+    const stockGeometry = new THREE.BoxGeometry(0.15, 1, 0.125);
+    const gripGeometry = new THREE.BoxGeometry(0.3, 0.06, 0.06);
+    const lineGeometry = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 2, 0), new THREE.Vector3(0, 30, 0)]);
+
+    const material = new THREE.MeshPhongMaterial({ color: 0x6C5B7B, side: THREE.DoubleSide });
+    const lineMaterial = new THREE.LineBasicMaterial({ color: 0xF67280 });
+
+    const barrel = new THREE.Mesh(barrelGeometry, material);
+    const stock = new THREE.Mesh(stockGeometry, material);
+    const grip = new THREE.Mesh(gripGeometry, material);
+    const line = new THREE.Line(lineGeometry, lineMaterial);
+
+    barrel.position.y = 1;
+    stock.position.y = -0.25;
+    grip.position.x = 0.1;
+    grip.rotation.z = degToRad(-20);
+
+    const object = new THREE.Object3D();
+    object.add(barrel, stock, grip, line);
     return object;
   }
 
