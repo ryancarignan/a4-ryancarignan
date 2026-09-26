@@ -19,6 +19,7 @@ export class Game {
   private targets: Character[];
   private map: Map;
   private previousTime;
+  private score: number;
 
   private constructor(canvas: HTMLCanvasElement, gameWindowWidth: number, gameWindowHeight: number, playerMesh: THREE.Object3D) {
     this.game = new THREE.Object3D();
@@ -39,6 +40,7 @@ export class Game {
     this.map = new Map();
     this.previousTime = 0;
     this.createReticle();
+    this.score = 0;
   }
 
   public static async create(canvas: HTMLCanvasElement, gameWindowWidth: number, gameWindowHeight: number): Promise<Game> {
@@ -138,6 +140,10 @@ export class Game {
     return this.camera.getCamera();
   }
 
+  public getScore(): number {
+    return this.score;
+  }
+
   public updateGameState(time: number) {
     const deltaTime = (this.previousTime === 0)
       ? 0
@@ -166,7 +172,7 @@ export class Game {
       for (const target of this.targets) {
         if (this.player.hitTarget(target.getObject3D())) {
           if (this.debugOn) {
-            debug('hit-target', true);
+            this.score++;
             this.moveTarget(target);
           }
         }
