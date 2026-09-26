@@ -6,6 +6,7 @@ import { PlayerCharacter } from './characters/PlayerCharacter';
 import { Controller } from './Controller';
 import { Map } from './Map';
 import { Weapon } from './Weapon';
+import { Character } from './characters/Character';
 
 export class Game {
 
@@ -15,6 +16,7 @@ export class Game {
   private camera: Camera;
   private controller: Controller;
   private player: PlayerCharacter;
+  private targets: Character[];
   private map: Map;
   private previousTime;
 
@@ -27,6 +29,10 @@ export class Game {
     const weapon = new Weapon(weaponModel);
     this.player = new PlayerCharacter(playerMesh, this.camera, weapon);
     this.game.add(this.player.getObject3D());
+    const target1 = new Character(this.createFallbackTargetMesh());
+    target1.setPosition(new THREE.Vector3(8, 4, 0));
+    this.targets = [];
+    this.addTarget(target1);
     this.map = new Map();
     this.previousTime = 0;
     this.createReticle();
@@ -108,6 +114,19 @@ export class Game {
     document.body.appendChild(reticle);
   }
 
+  private createFallbackTargetMesh(): THREE.Object3D {
+    const geometry = new THREE.SphereGeometry(0.75, 8, 8);
+    geometry.scale(0.5, 1, 1);
+    const material = new THREE.MeshPhongMaterial({ color: 0xF8B195, side: THREE.DoubleSide });
+    const target = new THREE.Mesh(geometry, material);
+    return target;
+  }
+
+  private addTarget(target: Character) {
+    this.targets.push(target);
+    this.game.add(target.getObject3D());
+  }
+
   public getGameObject(): THREE.Object3D {
     return this.game;
   }
@@ -139,6 +158,16 @@ export class Game {
     this.player.updatePosition();
     this.camera.updateCameraPosition();
     this.player.updateRotation();
+
+    if (this.controller.getFire()) {
+      for (const target of this.targets) {
+        if (this.player.hitTarget(target.getObject3D())) {
+          if (this.debugOn) {
+            debug('hit-target', true);
+          }
+        }
+      }
+    }
   }
 
   private static async loadModel(loader: FBXLoader, filepath: string): Promise<THREE.Object3D | undefined> {

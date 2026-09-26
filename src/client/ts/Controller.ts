@@ -405,7 +405,7 @@ export class Controller {
   private applySensitivity(lookVal: number): number {
     const sensBaseScale = {
       'mouse': 0.3,
-      'stick': 3,
+      'stick': 2,
       'gyro': 1,
     };
     const oneCenteredSens = 1 + 0.1 * this.sensitivity;

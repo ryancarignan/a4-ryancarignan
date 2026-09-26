@@ -70,6 +70,11 @@ export class Camera {
     return new THREE.Vector3(this.x, this.y, this.z);
   }
 
+  /** Get rho (distance from camera to its origin which it rotates around) */
+  public getRho(): number {
+    return this.rho;
+  }
+
   /**
    * Move according to an absolute position of a controller.
    * @param x absolute X-position of the controller [-1..1]

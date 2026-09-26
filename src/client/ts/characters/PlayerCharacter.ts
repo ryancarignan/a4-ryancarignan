@@ -10,6 +10,7 @@ export class PlayerCharacter extends Character {
   private camera: Camera;
   private weapon: Weapon;
   private grounded: boolean;
+  private raycaster: THREE.Raycaster;
 
   public constructor(model: THREE.Object3D, camera: Camera, weapon: Weapon) {
     super(model);
@@ -20,6 +21,15 @@ export class PlayerCharacter extends Character {
     this.model.add(weapon.getObject3D());
     this.weapon.setPosition(PlayerCharacter.WEAPON_OFFSET);
     this.grounded = false;
+    this.raycaster = this.createRaycaster();
+  }
+
+  private createRaycaster(): THREE.Raycaster {
+    const origin = this.camera.getPosition();
+    const direction = new THREE.Vector3(0, 0, -1);
+    const near = this.camera.getRho();
+    const far = 100;
+    return new THREE.Raycaster(origin, direction, near, far);
   }
 
   public updateRotation() {
@@ -94,4 +104,35 @@ export class PlayerCharacter extends Character {
       this.grounded = true;
     }
   }
+
+  public hitTarget(target: THREE.Object3D): boolean {
+    // Use the camera's actual world transform (not the local spherical
+    // offset from Camera.getPosition()) so the ray lines up with the
+    // reticle regardless of the player's world position/rotation.
+    const camera = this.camera.getCamera();
+    const lineStart = camera.getWorldPosition(new THREE.Vector3());
+    const direction = camera.getWorldDirection(new THREE.Vector3());
+    const lineLength = this.weapon.getRange();
+
+    // 2. Set up the Raycaster
+    this.raycaster.set(lineStart, direction);
+
+    // 3. Test intersection against the mesh
+    // Raycaster automatically handles the underlying transformation matrices
+    const intersects = this.raycaster.intersectObject(target);
+
+    // 4. Validate if the hit happened within the bounds of the finite line
+    if (intersects.length > 0) {
+        const hitDistance = intersects[0].distance;
+
+        // If the collision distance is less than or equal to our line length,
+        // it means the intersection happened on our line segment.
+        if (hitDistance <= lineLength) {
+          return true;
+        }
+    }
+
+    return false;
+  }
+
 }

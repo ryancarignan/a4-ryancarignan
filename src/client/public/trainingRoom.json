@@ -80,20 +80,6 @@
                 "transparent": true
             },
             "rotation": { "x": 0, "y": 90, "z": 0 }
-        },
-        {
-            "name": "target1",
-            "pos": { "x": 8, "y": 4, "z": 0 },
-            "geometryType": "sphere",
-            "geometry": {
-                "radius": 0.75,
-                "heightSegments": 5,
-                "widthSegments": 5
-            },
-            "material": {
-                "color": "#F8B195",
-                "side": 2
-            }
         }
     ]
 }
