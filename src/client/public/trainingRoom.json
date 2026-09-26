@@ -16,10 +16,10 @@
     "colliders": [
         {
             "name": "floor",
-            "pos": { "x": 0, "y": -1, "z": 0 },
+            "pos": { "x": -5, "y": -1, "z": 0 },
             "geometryType": "plane",
             "geometry": {
-                "width": 20,
+                "width": 30,
                 "height": 20
             },
             "material": {
@@ -30,10 +30,10 @@
         },
         {
             "name": "left wall",
-            "pos": { "x": 0, "y": 4, "z": -10 },
+            "pos": { "x": -5, "y": 4, "z": -10 },
             "geometryType": "plane",
             "geometry": {
-                "width": 20,
+                "width": 30,
                 "height": 10
             },
             "material": {
@@ -42,10 +42,10 @@
         },
         {
             "name": "right wall",
-            "pos": { "x": 0, "y": 4, "z": 10 },
+            "pos": { "x": -5, "y": 4, "z": 10 },
             "geometryType": "plane",
             "geometry": {
-                "width": 20,
+                "width": 30,
                 "height": 10
             },
             "material": {
@@ -69,7 +69,7 @@
         },
         {
             "name": "back wall",
-            "pos": { "x": -10, "y": 4, "z": 0 },
+            "pos": { "x": -20, "y": 4, "z": 0 },
             "geometryType": "plane",
             "geometry": {
                 "width": 20,

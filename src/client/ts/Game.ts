@@ -10,7 +10,7 @@ import { Character } from './characters/Character';
 
 export class Game {
 
-  public debugOn = false;
+  public debugOn = true;
 
   private game: THREE.Object3D;
   private camera: Camera;
@@ -30,9 +30,12 @@ export class Game {
     this.player = new PlayerCharacter(playerMesh, this.camera, weapon);
     this.game.add(this.player.getObject3D());
     const target1 = new Character(this.createFallbackTargetMesh());
+    const target2 = new Character(this.createFallbackTargetMesh());
     target1.setPosition(new THREE.Vector3(8, 4, 0));
+    target2.setPosition(new THREE.Vector3(8, 4, 3));
     this.targets = [];
     this.addTarget(target1);
+    this.addTarget(target2);
     this.map = new Map();
     this.previousTime = 0;
     this.createReticle();
@@ -164,10 +167,18 @@ export class Game {
         if (this.player.hitTarget(target.getObject3D())) {
           if (this.debugOn) {
             debug('hit-target', true);
+            this.moveTarget(target);
           }
         }
       }
     }
+  }
+
+  private moveTarget(target: Character) {
+    const x = 8;
+    const y = Math.random() * (6 - 1) + 1;
+    const z = Math.random() * (6 - -6) + -6
+    target.setPosition(new THREE.Vector3(x, y, z));
   }
 
   private static async loadModel(loader: FBXLoader, filepath: string): Promise<THREE.Object3D | undefined> {
