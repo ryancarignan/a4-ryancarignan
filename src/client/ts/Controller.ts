@@ -41,12 +41,11 @@ export class Controller {
     this.pointerLockChangeHandler = this.pointerLockChangeHandler.bind(this);
     this.mousemoveHandler = this.mousemoveHandler.bind(this);
 
+    this.canvas = canvas;
     this.setLookMethod(lookMethod);
     this.setMoveMethod(moveMethod);
     this.controllerLayout = controllerLayout ?? 'switchPro';
     this.sensitivity = 0;
-
-    this.canvas = canvas;
 
     this.lookX = 0
     this.lookY = 0
@@ -309,9 +308,9 @@ export class Controller {
     }
   }
 
-  private async pointerLockHandler() {
-    await this.canvas.requestPointerLock({
-      unadjustedMovement: true,
+  private pointerLockHandler() {
+    void this.canvas.requestPointerLock().catch((error: unknown) => {
+      console.warn('Unable to lock pointer:', error);
     });
   }
 
@@ -389,8 +388,11 @@ export class Controller {
       case 'mouse':
         document.addEventListener('mousedown', this.mousedownHandler)
         document.addEventListener('mouseup', this.mouseupHandler)
-        document.addEventListener('click', this.pointerLockHandler);
+        this.canvas.addEventListener('click', this.pointerLockHandler);
         document.addEventListener('pointerlockchange', this.pointerLockChangeHandler)
+        if (document.pointerLockElement === this.canvas) {
+          this.pointerLockChangeHandler();
+        }
         break;
       case 'stick':
         break;

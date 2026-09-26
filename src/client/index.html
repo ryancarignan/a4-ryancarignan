@@ -7,6 +7,34 @@
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
+  <form id="settings" action="">
+    <fieldset>
+      <legend>Input Method</legend>
+      <label>
+        Mouse & Keyboard
+        <input type="radio" name="inputMethod" value="mk" checked>
+      </label>
+      <label>
+        Controller
+        <input type="radio" name="inputMethod" value="st">
+      </label>
+    </fieldset>
+    <label>
+      Look Sensitivity
+      <input type="range" id="lookSensitivity" min="-5" max="5" step="1">
+    </label>
+    <label>
+      Target Count
+      <input type="range" id="targetCount" min="1" max="3" step="1">
+    </label>
+    <label>
+      Target Radius
+      <input type="range" id="targetRadius" min="0.25" max="0.75" step="0.05">
+    </label>
+    <label>
+      <button type="button" id="start-game">Start Game!</button>
+    </label>
+  </form>
   <div id="debug-container"></div>
   <script type="module" src="./main.ts"></script>
 </body>

@@ -1,12 +1,13 @@
 import * as THREE from 'three';
 import { FBXLoader } from 'three/examples/jsm/Addons.js';
 import { Camera } from './Camera';
-import { debug, degToRad, extractErrorMessage } from './utils';
+import { clamp, debug, degToRad, extractErrorMessage } from './utils';
 import { PlayerCharacter } from './characters/PlayerCharacter';
 import { Controller } from './Controller';
 import { Map } from './Map';
 import { Weapon } from './Weapon';
 import { Character } from './characters/Character';
+import { LookMethod, MoveMethod } from './types';
 
 export class Game {
 
@@ -21,32 +22,57 @@ export class Game {
   private previousTime;
   private score: number;
 
-  private constructor(canvas: HTMLCanvasElement, gameWindowWidth: number, gameWindowHeight: number, playerMesh: THREE.Object3D) {
+  private constructor(
+    canvas: HTMLCanvasElement,
+    gameWindowWidth: number,
+    gameWindowHeight: number,
+    playerMesh: THREE.Object3D,
+    lookMethod: LookMethod,
+    moveMethod: MoveMethod,
+    lookSensitivity: number,
+    targetCount: number,
+    targetRadius: number
+  ) {
     this.game = new THREE.Object3D();
     this.camera = new Camera(gameWindowWidth, gameWindowHeight);
-    this.controller = new Controller(canvas, 'mouse', 'keyboard');
+    this.controller = new Controller(canvas, lookMethod, moveMethod);
+    this.controller.setSensitivity(lookSensitivity);
     const weaponModel = Game.createFallbackWeaponMesh();
     const weapon = new Weapon(weaponModel);
     this.player = new PlayerCharacter(playerMesh, this.camera, weapon);
     this.game.add(this.player.getObject3D());
-    const target1 = new Character(this.createFallbackTargetMesh());
-    const target2 = new Character(this.createFallbackTargetMesh());
-    target1.setPosition(new THREE.Vector3(8, 4, 0));
-    target2.setPosition(new THREE.Vector3(8, 4, 3));
     this.targets = [];
-    this.addTarget(target1);
-    this.addTarget(target2);
+    this.createTargets(targetCount, targetRadius);
     this.map = new Map();
     this.previousTime = 0;
     this.createReticle();
     this.score = 0;
   }
 
-  public static async create(canvas: HTMLCanvasElement, gameWindowWidth: number, gameWindowHeight: number): Promise<Game> {
+  public static async create(
+    canvas: HTMLCanvasElement,
+    gameWindowWidth: number,
+    gameWindowHeight: number,
+    lookMethod?: LookMethod,
+    moveMethod?: MoveMethod,
+    lookSensitivity?: number,
+    targetCount?: number,
+    targetRadius?: number
+  ): Promise<Game> {
     const loader = new FBXLoader();
     const inklingFilepath = '/Player01/Player01.fbx';
     const playerMesh = await Game.loadModel(loader, inklingFilepath) ?? Game.createFallbackPlayerMesh();
-    return new Game(canvas, gameWindowWidth, gameWindowHeight, playerMesh);
+    return new Game(
+      canvas,
+      gameWindowWidth,
+      gameWindowHeight,
+      playerMesh,
+      lookMethod ?? 'mouse',
+      moveMethod ?? 'keyboard',
+      lookSensitivity ?? 0,
+      targetCount ?? 1,
+      targetRadius ?? 0.75
+    );
   }
 
   private static createFallbackPlayerMesh(): THREE.Object3D {
@@ -118,12 +144,21 @@ export class Game {
     document.body.appendChild(reticle);
   }
 
-  private createFallbackTargetMesh(): THREE.Object3D {
-    const geometry = new THREE.SphereGeometry(0.75, 8, 8);
+  private createFallbackTargetMesh(radius?: number): THREE.Object3D {
+    const geometry = new THREE.SphereGeometry(radius ?? 0.75, 8, 8);
     geometry.scale(0.5, 1, 1);
     const material = new THREE.MeshPhongMaterial({ color: 0xF8B195, side: THREE.DoubleSide });
     const target = new THREE.Mesh(geometry, material);
     return target;
+  }
+
+  private createTargets(numTargets: number, targetRadius?: number) {
+    numTargets = clamp(numTargets, 1, 3);
+    for (let i = 0; i < numTargets; i++) {
+      const target = new Character(this.createFallbackTargetMesh(targetRadius));
+      target.setPosition(new THREE.Vector3(8, 4, -3 + 3 * i));
+      this.addTarget(target);
+    }
   }
 
   private addTarget(target: Character) {
@@ -150,7 +185,6 @@ export class Game {
     this.previousTime = time;
 
     this.controller.read();
-    //this.camera.moveAbsolute(window.innerWidth / 2 + 1 * this.controller.getLookX(), window.innerHeight / 2 + 1 * this.controller.getLookY());
     this.camera.moveRelative(this.controller.getLookX(), this.controller.getLookY());
 
     const velocity = new THREE.Vector3(this.controller.getMoveX(), 0, this.controller.getMoveY());
@@ -195,10 +229,10 @@ export class Game {
 
   public async start() {
     // Bad solution, should add explicit form
-    window.addEventListener('gamepadconnected', (ev: GamepadEvent) => {
-      this.controller.setLookMethod('stick');
-      this.controller.setMoveMethod('stick');
-    });
+    // window.addEventListener('gamepadconnected', (ev: GamepadEvent) => {
+    //   this.controller.setLookMethod('stick');
+    //   this.controller.setMoveMethod('stick');
+    // });
 
     await this.map.loadMap('trainingRoom.json');
     this.game.add(this.map.getMap());
