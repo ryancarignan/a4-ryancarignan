@@ -10,7 +10,7 @@ import { Character } from './characters/Character';
 
 export class Game {
 
-  public debugOn = true;
+  public debugOn = false;
 
   private game: THREE.Object3D;
   private camera: Camera;
@@ -24,8 +24,7 @@ export class Game {
   private constructor(canvas: HTMLCanvasElement, gameWindowWidth: number, gameWindowHeight: number, playerMesh: THREE.Object3D) {
     this.game = new THREE.Object3D();
     this.camera = new Camera(gameWindowWidth, gameWindowHeight);
-    this.camera.debugOn = true;
-    this.controller = new Controller(canvas, 'stick', 'stick');
+    this.controller = new Controller(canvas, 'mouse', 'keyboard');
     const weaponModel = Game.createFallbackWeaponMesh();
     const weapon = new Weapon(weaponModel);
     this.player = new PlayerCharacter(playerMesh, this.camera, weapon);
@@ -153,7 +152,6 @@ export class Game {
     this.controller.read();
     //this.camera.moveAbsolute(window.innerWidth / 2 + 1 * this.controller.getLookX(), window.innerHeight / 2 + 1 * this.controller.getLookY());
     this.camera.moveRelative(this.controller.getLookX(), this.controller.getLookY());
-    this.controller.debugOn = true;
 
     const velocity = new THREE.Vector3(this.controller.getMoveX(), 0, this.controller.getMoveY());
     velocity.multiplyScalar(0.02);
@@ -171,10 +169,8 @@ export class Game {
     if (this.controller.getFire()) {
       for (const target of this.targets) {
         if (this.player.hitTarget(target.getObject3D())) {
-          if (this.debugOn) {
-            this.score++;
-            this.moveTarget(target);
-          }
+          this.score++;
+          this.moveTarget(target);
         }
       }
     }
@@ -192,13 +188,18 @@ export class Game {
       return await loader.loadAsync(filepath);
     } catch (error) {
       const errorMessage = extractErrorMessage(error, 'Unknown error from loadModel');
-      debug('load-error', errorMessage);
       console.log(error);
       return undefined;
     }
   }
 
   public async start() {
+    // Bad solution, should add explicit form
+    window.addEventListener('gamepadconnected', (ev: GamepadEvent) => {
+      this.controller.setLookMethod('stick');
+      this.controller.setMoveMethod('stick');
+    });
+
     await this.map.loadMap('trainingRoom.json');
     this.game.add(this.map.getMap());
   }
