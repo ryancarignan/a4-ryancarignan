@@ -3,7 +3,7 @@ import type { BoxGeometryDTO, MapDTO, PlaneGeometryDTO, SphereGeometryDTO } from
 import { degToRad, dtoToVector3 } from './utils';
 
 export class Map {
-  public debugOn = true;
+  public debugOn = false;
 
   private lights: THREE.DirectionalLight[];
   private colliders: THREE.Object3D[];

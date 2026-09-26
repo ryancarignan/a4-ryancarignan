@@ -8,15 +8,16 @@
 </head>
 <body>
   <form id="settings" action="">
+    <h3>Settings</h3>
     <fieldset>
       <legend>Input Method</legend>
       <label>
-        Mouse & Keyboard
         <input type="radio" name="inputMethod" value="mk" checked>
+        Mouse & Keyboard
       </label>
       <label>
-        Controller
         <input type="radio" name="inputMethod" value="st">
+        Controller
       </label>
     </fieldset>
     <label>
@@ -34,6 +35,14 @@
     <label>
       <button type="button" id="start-game">Start Game!</button>
     </label>
+    <div>
+      <h3>Welcome</h3>
+      This is a simple 3rd-person aim trainer using Three.js. Move around and shoot the targets in the time limit to try to get a high score, or make things more difficult for yourself by decreasing target radius and count.
+    </div>
+    <div>
+      <h3>Controls</h3>
+      Select mouse and keyboard controls to use WASD and the mouse to aim. Fire with LMB and jump with space. You can also connect a controller and use LS to move, RS to aim, RT to fire, and A/B to jump. Note: I was only able to test / make button maps for a Switch pro controller and Xbox One controller, and only Chrome and Safari took the inputs correctly with a wired connection. If you are wondering if your controller is connecting properly, try testing with a <a href="http://hardwaretester.com/gamepad">Gamepad API tester</a>.
+    </div>
   </form>
   <div id="debug-container"></div>
   <script type="module" src="./main.ts"></script>

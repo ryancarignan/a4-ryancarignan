@@ -53,3 +53,23 @@ body {
   font-size: 1rem;
   cursor: pointer;
 }
+
+#settings {
+  padding: 1rem;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: center;
+}
+
+#settings > * {
+  max-width: 70%;
+}
+
+#settings button {
+  padding: 0.5rem;
+  font-size: 1.125rem;;
+}

@@ -4,6 +4,7 @@ import { debug } from './ts/utils';
 import { LookMethod, MoveMethod } from './ts/types';
 
 const GAME_TIME_SECONDS = 30;
+let startTime: number | null = null;
 
 // debug log settings
 const debugOn = false;
@@ -62,20 +63,21 @@ async function main(inputMethodValue = document.querySelector<HTMLInputElement>(
 
   await game.start();
   let gameOverFlag = false;
+  let previousFrameTime: number | null = null;
 
-  let startTime = 0;
   function animate(time: number) {
-    let endTime = time;
+    if (startTime === null) startTime = time;
     
     if (!gameOverFlag) game.updateGameState(time);
 
     renderer.render(scene, game.getGameCamera());
 
-    if (debugOn) debug('fps', endTime - startTime);
-    startTime = time;
+    if (debugOn && previousFrameTime !== null) debug('fps', time - previousFrameTime);
+    previousFrameTime = time;
 
-    if (!gameOverFlag) setClock((time / 1000).toFixed(2));
-    if (!gameOverFlag && time / 1000 >= GAME_TIME_SECONDS) {
+    const gameTime = time - startTime;
+    if (!gameOverFlag) setClock((gameTime / 1000).toFixed(2));
+    if (!gameOverFlag && gameTime / 1000 >= GAME_TIME_SECONDS) {
       gameOver(game.getScore());
       gameOverFlag = true;
     }
